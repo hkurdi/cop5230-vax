@@ -41,5 +41,3 @@ I want to express my gratitude to Professor Pazos-Revilla for providing a perfec
 
 ---
 *Hamza Kurdi*  
-University of South Florida  
-Summer 2025
