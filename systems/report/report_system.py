@@ -5,6 +5,7 @@
 # Hamza Kurdi
 
 from typing import Dict, Any, List
+from datetime import datetime
 from classes.base_classes import ReportGenerator
 from classes.person.vaccine_manager import VaccineManager
 
@@ -274,54 +275,77 @@ class ReportManager:
         """
         try:
             report = self.__factory.create_individual_report(self.__vaccine_manager, patient_id)
-            formatted_report = report.format_report(**format_options)
             
-            # store in history for potential reuse
+            valid_options = {}
+            if 'title' in format_options:
+                valid_options['title'] = format_options['title']
+            if 'include_stats' in format_options:
+                valid_options['include_stats'] = format_options['include_stats']
+            
+            formatted_report = report.format_report(**valid_options)
+            
             self.__report_history.append({
                 'type': 'individual',
                 'patient_id': patient_id,
                 'content': formatted_report,
-                'timestamp': None  # could add timestamp here
+                'timestamp': datetime.now().strftime("%m-%d-%Y")
             })
             
             return formatted_report
             
         except Exception as e:
-            return f"Error generating individual report: {str(e)}"
+            # print(f"Error generating individual report: {str(e)}")
+            return f"Error generating individual report"
     
     def generate_vaccination_stats(self, **format_options) -> str:
         """Generate vaccination statistics report"""
         try:
             report = self.__factory.create_vaccination_report(self.__vaccine_manager)
-            formatted_report = report.format_report(**format_options)
+            
+            valid_options = {}
+            if 'title' in format_options:
+                valid_options['title'] = format_options['title']
+            if 'include_stats' in format_options:
+                valid_options['include_stats'] = format_options['include_stats']
+            
+            formatted_report = report.format_report(**valid_options)
             
             self.__report_history.append({
                 'type': 'vaccination',
                 'content': formatted_report,
-                'timestamp': None
+                'timestamp': datetime.now().strftime("%m-%d-%Y")
             })
             
             return formatted_report
             
         except Exception as e:
-            return f"Error generating vaccination report: {str(e)}"
+            # print(f"Error generating vaccination report: {str(e)}")
+            return f"Error generating vaccination report"
     
     def generate_symptom_analysis(self, **format_options) -> str:
         """Generate symptom analysis report"""
         try:
             report = self.__factory.create_symptom_report(self.__vaccine_manager)
-            formatted_report = report.format_report(**format_options)
+            
+            valid_options = {}
+            if 'title' in format_options:
+                valid_options['title'] = format_options['title']
+            if 'include_stats' in format_options:
+                valid_options['include_stats'] = format_options['include_stats']
+            
+            formatted_report = report.format_report(**valid_options)
             
             self.__report_history.append({
                 'type': 'symptom',
                 'content': formatted_report,
-                'timestamp': None
+                'timestamp': datetime.now().strftime("%m-%d-%Y")
             })
             
             return formatted_report
             
         except Exception as e:
-            return f"Error generating symptom report: {str(e)}"
+            # print(f"Error generating symptom analysis: {str(e)}")
+            return f"Error generating symptom report"
     
     def get_report_history_count(self) -> int:
         """Get number of reports generated"""

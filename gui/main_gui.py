@@ -81,7 +81,7 @@ class VaccineTrackerGUI:
         
         # subtitle w/ course info
         subtitle = pygwidgets.DisplayText(
-            self.__window, (card_left, 55), "COP5230 Hamza Kurdi - Enhanced OOP Version",
+            self.__window, (card_left, 55), "COP5230 Hamza Kurdi - Final Assignment",
             fontSize=14, textColor=self.__colors['text_light'], justified='center', width=card_width
         )
         self.__main_widgets.append(subtitle)
