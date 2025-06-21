@@ -342,10 +342,9 @@ class PatientDisplayHandler:
     
     def __update_nav_button_states(self, current_index: int, total_count: int):
         """
-        Private method to update navigation button states.
-        Handles button enabling/disabling logic.
+        Update navigation button states with better handling
         """
-        if total_count == 0:
+        if total_count <= 0:
             self.__nav_buttons['prev'].disable()
             self.__nav_buttons['next'].disable()
         else:
@@ -355,12 +354,11 @@ class PatientDisplayHandler:
             else:
                 self.__nav_buttons['prev'].disable()
             
-            # next button
+            # next button  
             if current_index < total_count - 1:
                 self.__nav_buttons['next'].enable()
             else:
                 self.__nav_buttons['next'].disable()
-    
     def draw_status_indicator(self):
         """Draw the status indicator circle"""
         pygame.draw.circle(self.__window, self.__indicator_color, self.__indicator_pos, 20)
@@ -605,22 +603,24 @@ class EnhancedVaccineGUI:
     
     def __update_patient_display(self):
         """
-        Private method to update patient display.
-        Uses display handler for separation of concerns.
+        Update patient display with better index handling
         """
         current_person = None
         total_count = self.__manager.get_person_count()
         
-        # ensure valid index
-        if total_count > 0:
-            if self.__current_index < 0:
-                self.__current_index = 0
-            elif self.__current_index >= total_count:
-                self.__current_index = total_count - 1
-            
-            current_person = self.__manager.get_person_by_index(self.__current_index)
+        # Handle empty system
+        if total_count == 0:
+            self.__current_index = -1
+            self.__display_handler.update_patient_display(None, -1, 0)
+            return
         
-        # update display using handler
+        # Ensure valid index for non-empty system
+        if self.__current_index < 0:
+            self.__current_index = 0
+        elif self.__current_index >= total_count:
+            self.__current_index = total_count - 1
+        
+        current_person = self.__manager.get_person_by_index(self.__current_index)
         self.__display_handler.update_patient_display(current_person, self.__current_index, total_count)
     
     # Action button handlers using polymorphic report generation
@@ -714,14 +714,20 @@ class EnhancedVaccineGUI:
     
     def __process_reset_confirmation(self, confirmed: bool):
         """Process reset confirmation callback"""
+        print(f"DEBUG: Reset confirmation received: {confirmed}")
+        
         if confirmed:
-            self.__manager.reset_all_medical_data()
-            self.__dialog_manager.show_info_dialog(
-                "Reset Complete",
-                f"All vaccination and symptom data has been cleared for {self.__manager.get_person_count()} patient(s).\n\nPatient information has been preserved."
-            )
-            self.__update_patient_display()
-            self.__form_handler.clear_form()
+            try:
+                count = self.__manager.reset_all_medical_data()
+                self.__update_patient_display()
+                self.__form_handler.clear_form()
+                
+                success_msg = f"All vaccination and symptom data has been cleared for {count} patient(s).\n\nPatient information has been preserved."
+                self.__dialog_manager.show_info_dialog("Reset Complete", success_msg)
+                
+            except Exception as e:
+                print(f"DEBUG: Error during reset: {str(e)}")
+                self.__dialog_manager.show_error_dialog("Reset Failed", f"Error: {str(e)}")
     
     def __handle_delete_all(self):
         """Handle delete all patients with confirmation"""
@@ -747,17 +753,22 @@ class EnhancedVaccineGUI:
     
     def __process_delete_confirmation(self, confirmed: bool):
         """Process delete confirmation callback"""
+        print(f"DEBUG: Delete confirmation received: {confirmed}")
+        
         if confirmed:
-            patient_count = self.__manager.get_person_count()
-            self.__manager.clear_all_people()
-            self.__current_index = -1
-            self.__update_patient_display()
-            self.__form_handler.clear_form()
-            
-            self.__dialog_manager.show_info_dialog(
-                "Deletion Complete",
-                f"All {patient_count} patient record(s) have been permanently deleted from the system."
-            )
+            try:
+                patient_count = self.__manager.get_person_count()
+                self.__manager.clear_all_people()
+                self.__current_index = -1
+                self.__update_patient_display()
+                self.__form_handler.clear_form()
+                
+                success_msg = f"All {patient_count} patient record(s) have been permanently deleted from the system."
+                self.__dialog_manager.show_info_dialog("Deletion Complete", success_msg)
+                
+            except Exception as e:
+                print(f"DEBUG: Error during deletion: {str(e)}")
+                self.__dialog_manager.show_error_dialog("Deletion Failed", f"Error: {str(e)}")
     
     def __handle_exit(self):
         """Handle application exit with confirmation"""

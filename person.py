@@ -409,15 +409,20 @@ class VaccineManager:
     
     def clear_all_people(self):
         """Clear all people from manager"""
+        count = len(self.__people)
         self.__people.clear()
         self.__id_tracker.clear()
-        # print("Cleared all people from manager")
+        print(f"DEBUG: Cleared {count} people from manager")
+        return count
     
     def reset_all_medical_data(self):
         """Reset vaccine and symptom data for all people"""
+        count = 0
         for person in self.__people:
             person.reset_data()
-        # print(f"Reset medical data for {len(self.__people)} people")
+            count += 1
+        print(f"DEBUG: Reset medical data for {count} people")
+        return count
     
     def get_available_ids(self) -> List[int]:
         """Get list of all currently used IDs"""
