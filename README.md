@@ -32,10 +32,6 @@ This project reinforced and expanded my understanding of:
 - Advanced error handling and input validation
 - Data persistence patterns
 
-## Running the Program
-1. Install requirements: `pip install -r requirements.txt`
-2. Run: `python main.py`
-
 ## Special Thanks
 I want to express my gratitude to Professor Pazos-Revilla for providing a perfect blend of theoretical foundations and practical applications. His approach to teaching OOP concepts has given me valuable insights that I'll carry into my MS in Computer Science program next fall. Special thanks also to TA Zachary Hinnen for the constructive feedback throughout the course. This class has been an excellent bridge between my industry experience and academic pursuits.
 
