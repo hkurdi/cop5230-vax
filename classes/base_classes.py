@@ -127,6 +127,13 @@ class DialogHandler(ABC):
         self._title = title
         self._message = message
         self._result = None
+        self._callback = None
+        
+    def set_callback(self, callback):
+        """Sets the callback function for this dialog"""
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Provides controlled way to set the callback while maintaining encapsulation
+        self._callback = callback
     
     # ===== ENCAPSULATION DEMONSTRATED HERE =====
     # Properties provide controlled access to encapsulated data
