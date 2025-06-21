@@ -19,7 +19,7 @@ The GUI implementation went through an interesting evolution. We started with tk
 
 ## Project Structure
 - `gui/`: Contains all the pygame/pygwidgets GUI implementation
-- `classes/`: Core classes for the business logic
+- `classes/`: Core classes for the logic
 - `systems/`: Backend functionality and data management
 - `main.py`: Entry point of the application
 
