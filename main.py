@@ -1,5 +1,5 @@
 # main.py
-# Final Vax Project Main Module
+# Vax Project Main Module
 # COP5230 Assignment M5
 # 06/21/2025
 # Hamza Kurdi

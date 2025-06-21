@@ -1,5 +1,5 @@
 # vaccine_manager.py
-# Final Vax Project - VaccineManager class implementation
+# Vax Project - VaccineManager class impl
 # COP5230 Assignment M5 
 # 06/21/2025
 # Hamza Kurdi

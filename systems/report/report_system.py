@@ -1,5 +1,5 @@
 # report_system.py
-# Final Vax Project Report System
+# Vax Project Report System
 # COP5230 Assignment M5
 # 06/21/2025
 # Hamza Kurdi

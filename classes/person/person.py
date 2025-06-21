@@ -1,5 +1,5 @@
 # person.py
-# Final Vax Project Person classes - CLEANED VERSION
+# Vax Project Person class 
 # COP5230 Assignment M5
 # 06/21/2025
 # Hamza Kurdi

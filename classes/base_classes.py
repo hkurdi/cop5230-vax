@@ -1,13 +1,13 @@
 # base_classes.py
-# Final Vax Project Base Classes
+# Vax Project Base Classes
 # COP5230 Assignment M5 
 # 06/21/2025
 # Hamza Kurdi
 
 # So last time I had alot of unused methods that basically just building the skeleton
-# for this final project. So then, I left some methods as placeholders on purpose to show I understand 
+# for m5. So then, I left some methods as placeholders on purpose to show I understand 
 # how abstract classes work and stuff. This gives me a good foundation to build on for the 
-# actual implementation. Here's the finished base classes for the final project.
+# actual implementation. Here's the finished base classes for M5 and hopefully the final project.
 
 from abc import ABC, abstractmethod
 from typing import Dict, Any

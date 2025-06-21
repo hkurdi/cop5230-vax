@@ -1,5 +1,5 @@
 # dialog_system.py
-# Final Vax Project Dialog System
+# Vax Project Dialog System
 # COP5230 Assignment M5
 # 06/21/2025
 # Hamza Kurdi
