@@ -1,4 +1,4 @@
 venv/
 requirements.txt
 __pycache__/
-hkurdi_vaccine_project_m5.zip
+*.zip
