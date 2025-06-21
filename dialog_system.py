@@ -1,12 +1,12 @@
 # dialog_system.py
-# Polymorphic dialog system using abstract base classes
-# COP5230 Assignment 2 M4 - Enhanced OOP Version
-# 06/14/2025
+# Final Vax Project Dialog System
+# COP5230 Assignment M5
+# 06/21/2025
 # Hamza Kurdi
 
 import pygame
 import pygwidgets
-from typing import Any, Callable, Optional
+from typing import Any, Callable
 from base_classes import DialogHandler
 
 

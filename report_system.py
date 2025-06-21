@@ -1,12 +1,12 @@
 # report_system.py
-# Polymorphic report generation system using ABC
-# COP5230 Assignment 2 M4 - Enhanced OOP Version
-# 06/14/2025
+# Final Vax Project Report System
+# COP5230 Assignment M5
+# 06/21/2025
 # Hamza Kurdi
 
 from typing import Dict, Any, List
 from base_classes import ReportGenerator
-from person import VaccineManager
+from vaccine_manager import VaccineManager
 
 
 class IndividualReport(ReportGenerator):

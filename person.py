@@ -1,41 +1,42 @@
 # person.py
-# Final Vax Project Person and VaccineManager classes
+# Final Vax Project Person classes
 # COP5230 Assignment M5
 # 06/21/2025
 # Hamza Kurdi
 
-from typing import List, Optional, Dict, Any
+from typing import Dict
 from base_classes import DataEntity
 
 
 class Person(DataEntity):
     """
-    Enhanced Person class inheriting from DataEntity ABC.
-    Implements encapsulation with private variables and properties.
+    Person class that extends DataEntity base class.
+    Uses private attributes with getter/setter properties for data encapsulation.
+    Handles patient info, vaccination records, and symptom tracking.
     """
     
     def __init__(self, person_id: int, first_name: str, last_name: str, 
                  phone: str = "", address: str = ""):
-        """Initialize person with positional and keyword arguments"""
+        """Create new person object with required ID and name, optional contact info"""
         super().__init__(person_id)
         
-        # private instance variables
+        # store personal info as private attributes
         self.__first_name = first_name.strip()
         self.__last_name = last_name.strip()
         self.__phone = phone.strip()
         self.__address = address.strip()
         
-        # private vaccine status variables
+        # initialize vaccination status - all start as False
         self.__covid19_vaccine = False
         self.__influenza_vaccine = False
         self.__ebola_vaccine = False
         
-        # private symptom variables  
+        # symptom tracking variables
         self.__fever = False
         self.__fatigue = False
         self.__headache = False
     
-    # Properties for accessing private variables
+    # Property accessors for private data
     @property
     def first(self) -> str:
         return self.__first_name
@@ -102,14 +103,14 @@ class Person(DataEntity):
     
     def validate_data(self) -> bool:
         """
-        Implementation of abstract method from DataEntity.
-        Validates person data completeness.
+        Overrides the abstract validate_data method from parent class.
+        Makes sure person has required fields filled out properly.
         """
-        # required fields validation
+        # need at least first and last name
         if not self.__first_name or not self.__last_name:
             return False
         
-        # id validation (inherited from parent)
+        # check that ID is valid (inherited from DataEntity)
         if self._id <= 0:
             return False
         
@@ -117,8 +118,8 @@ class Person(DataEntity):
     
     def get_display_info(self) -> str:
         """
-        Implementation of abstract method from DataEntity.
-        Returns formatted display string for person.
+        Overrides abstract method to show formatted person information.
+        Returns a nice formatted string with all the patient details.
         """
         info = f"PATIENT INFORMATION\n"
         info += f"ID: {self._id}  |  Name: {self.__first_name} {self.__last_name}\n"
@@ -139,8 +140,8 @@ class Person(DataEntity):
     
     def is_cleared_for_entry(self) -> bool:
         """
-        Checks if person meets all requirements for entry.
-        Person is cleared if fully vaccinated and has no symptoms.
+        Determines if person can enter the facility based on vaccination and symptoms.
+        Need all 3 vaccines AND no symptoms to be cleared for entry.
         """
         fully_vaccinated = (self.__covid19_vaccine and 
                           self.__influenza_vaccine and 
@@ -151,13 +152,13 @@ class Person(DataEntity):
         return fully_vaccinated and not has_symptoms
     
     def reset_data(self):
-        """Reset vaccine and symptom data."""
-        # reset vaccine status
+        """Clears all vaccination and symptom data back to default values."""
+        # reset all vaccine flags
         self.__covid19_vaccine = False
         self.__influenza_vaccine = False
         self.__ebola_vaccine = False
         
-        # reset symptoms
+        # clear symptom flags
         self.__fever = False
         self.__fatigue = False
         self.__headache = False
@@ -165,8 +166,8 @@ class Person(DataEntity):
     def update_medical_data(self, vaccines: Dict[str, bool] = None, 
                            symptoms: Dict[str, bool] = None):
         """
-        Bulk update method using keyword arguments for flexibility.
-        Allows updating multiple medical fields at once.
+        Convenient method to update multiple medical fields at once.
+        Pass dictionaries with the fields you want to update.
         """
         if vaccines:
             if 'covid19' in vaccines:

@@ -9,64 +9,66 @@ from person import Person
 
 class VaccineManager:
     """
-    Enhanced manager class for Person collection.
-    Implements better encapsulation and scalability.
+    Manager class for handling Person collection.
+    This class encapsulates the person data and provides scalable operations.
+    I tried to follow good OOP principles here.
     """
     
     def __init__(self, max_capacity: int = 15):
-        self.__people = []  # private list 
+        self.__people = []  # private list to store people
         self.__max_capacity = max_capacity
     
     def get_person_count(self) -> int:
-        """Getter for current person count"""
+        """Returns the current number of people in the system"""
         return len(self.__people)
     
     def get_max_capacity(self) -> int:
-        """Getter for maximum capacity"""
+        """Returns the maximum capacity allowed"""
         return self.__max_capacity
     
     def add_person(self, person: Person) -> bool:
         """
-        Enhanced add person method with better validation.
-        Returns bool indicating success.
+        Adds a new person to the manager with validation.
+        Returns True if successful, False otherwise.
+        Had to add lots of checks to make sure we don't get duplicate data.
         """
-        # check capacity
+        # first check if we have room
         if len(self.__people) >= self.__max_capacity:
             return False
         
-        # check for duplicate ID
+        # make sure we don't have duplicate IDs
         if self.get_person_by_id(person.id):
             return False
         
-        # validate person data
+        # validate the person's data before adding
         if not person.validate_data():
             return False
         
-        # add person
+        # everything looks good, add the person
         self.__people.append(person)
         return True
     
     def get_person_by_id(self, person_id: int) -> Optional[Person]:
-        """Find person by ID"""
+        """Finds and returns a person by their ID, or None if not found"""
         for person in self.__people:
             if person.id == person_id:
                 return person
         return None
     
     def get_person_by_index(self, index: int) -> Optional[Person]:
-        """Get person by list index with bounds checking"""
+        """Gets person by their position in the list, with safety checks"""
         if 0 <= index < len(self.__people):
             return self.__people[index]
         return None
     
     def clear_all_people(self):
-        """Clear all people from manager"""
+        """Removes all people from the manager and returns how many were removed"""
         count = len(self.__people)
         self.__people.clear()
         return count
     
     def reset_all_medical_data(self):
-        """Reset vaccine and symptom data for all people"""
+        """Clears vaccine and symptom data for everyone and returns count"""
         count = 0
         for person in self.__people:
             person.reset_data()
@@ -75,8 +77,9 @@ class VaccineManager:
     
     def get_vaccination_stats(self) -> Dict[str, int]:
         """
-        Get vaccination statistics for all people.
-        Returns dict with vaccine counts.
+        Calculates vaccination statistics for all people in the system.
+        Returns a dictionary with counts for each vaccine type.
+        This method is pretty useful for generating reports.
         """
         stats = {
             'covid19': 0,
@@ -100,8 +103,9 @@ class VaccineManager:
     
     def get_symptom_stats(self) -> Dict[str, int]:
         """
-        Get symptom statistics for all people.
-        Returns dict with symptom counts.
+        Gathers symptom statistics for all people.
+        Returns dictionary with symptom counts and clearance info.
+        Took me a while to get this logic right.
         """
         stats = {
             'fever': 0,
@@ -119,6 +123,7 @@ class VaccineManager:
             if person.headache:
                 stats['headache'] += 1
             
+            # check if person has any symptoms at all
             if person.fever or person.fatigue or person.headache:
                 stats['any_symptoms'] += 1
             
@@ -127,8 +132,8 @@ class VaccineManager:
         
         return stats
     
-    # backward compatibility property
+    # keeping this for backwards compatibility with the GUI
     @property
     def people(self) -> List[Person]:
-        """Property for backward compatibility with existing GUI code"""
+        """Property to access the people list - needed for existing GUI code"""
         return self.__people
