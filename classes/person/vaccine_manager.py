@@ -5,7 +5,7 @@
 # Hamza Kurdi
 
 from typing import Optional, Dict, List
-from person import Person
+from .person import Person
 
 class VaccineManager:
     """

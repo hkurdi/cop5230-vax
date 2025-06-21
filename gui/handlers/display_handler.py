@@ -7,7 +7,7 @@
 import pygame
 import pygwidgets
 from typing import Optional, Dict, Any
-from config import GUIConfiguration
+from ..config.config import GUIConfiguration
 from classes.person.person import Person
 
 
@@ -118,10 +118,10 @@ class PatientDisplayHandler:
             
             # Add status information with appropriate colors
             if person.is_cleared_for_entry():
-                info += "STATUS: ✅ CLEARED FOR ENTRY\n(Fully vaccinated with no symptoms)"
+                info += "STATUS: [CLEARED] FOR ENTRY\n(Fully vaccinated with no symptoms)"
                 self.__indicator_color = self.__colors['success']
             else:
-                info += "STATUS: ❌ NOT CLEARED\n(Missing vaccines or has symptoms)"
+                info += "STATUS: [NOT CLEARED]\n(Missing vaccines or has symptoms)"
                 self.__indicator_color = self.__colors['danger']
             
             self.__patient_text.setValue(info)
@@ -164,9 +164,9 @@ class PatientDisplayHandler:
         # add the status symbol inside the circle
         status_font = pygame.font.Font(None, 24)
         if self.__indicator_color == self.__colors['success']:
-            status_text = "✓"
+            status_text = "+"
         elif self.__indicator_color == self.__colors['danger']:
-            status_text = "✗"
+            status_text = "-"
         else:
             status_text = "?"
         

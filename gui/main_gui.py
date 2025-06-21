@@ -9,13 +9,13 @@ import pygwidgets
 import sys
 
 # import our modular classes
-from config import GUIConfiguration
-from form_handler import PatientFormHandler
-from display_handler import PatientDisplayHandler
+from .config.config import GUIConfiguration
+from .handlers.form_handler import PatientFormHandler
+from .handlers.display_handler import PatientDisplayHandler
 from classes.person.person import Person
 from classes.person.vaccine_manager import VaccineManager
-from systems.report_system import ReportManager
-from systems.dialog_system import DialogManager
+from systems.report.report_system import ReportManager
+from systems.dialog.dialog_system import DialogManager
 
 
 class VaccineTrackerGUI:

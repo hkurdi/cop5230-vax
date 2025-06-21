@@ -108,7 +108,7 @@ class ErrorDialog(DialogHandler):
         
         # error title with different color
         title_widget = pygwidgets.DisplayText(
-            window, (dialog_rect.x + 25, dialog_rect.y + 25), f"⚠ {self._title}",
+            window, (dialog_rect.x + 25, dialog_rect.y + 25), f"[ERROR] {self._title}",
             fontSize=18, textColor=(239, 68, 68)  # red color for errors
         )
         self.__widgets.append(title_widget)

@@ -6,7 +6,7 @@
 
 import pygwidgets
 from typing import Dict, Any
-from config import GUIConfiguration
+from ..config.config import GUIConfiguration
 
 
 class PatientFormHandler:
