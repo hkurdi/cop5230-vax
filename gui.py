@@ -9,8 +9,9 @@ import pygwidgets
 import sys
 from typing import Optional, Dict, Any
 
-# import our enhanced modular classes
-from person import Person, VaccineManager
+# import our modular classes
+from person import Person
+from vaccine_manager import VaccineManager
 from report_system import ReportManager
 from dialog_system import DialogManager
 
