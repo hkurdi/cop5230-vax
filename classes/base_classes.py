@@ -12,7 +12,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any
 
-
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# DataEntity is an abstract base class that will be inherited by concrete classes like Person
+# This demonstrates INHERITANCE - subclasses inherit structure and behavior from this base class
 class DataEntity(ABC):
     """
     Base class for all the data stuff in the system.
@@ -20,13 +22,22 @@ class DataEntity(ABC):
     """
     
     def __init__(self, entity_id: int):
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Using protected attribute (_id) to hide internal implementation details
+        # Subclasses can access this, but external code should use the property
         self._id = entity_id
     
     @property
     def id(self) -> int:
         """Gets the ID"""
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Property provides controlled access to private data
+        # This encapsulates the internal _id attribute behind a clean interface
         return self._id
     
+    # ===== POLYMORPHISM DEMONSTRATED HERE =====
+    # These abstract methods will be implemented differently by each subclass
+    # This enables polymorphism - same method names, different behaviors
     @abstractmethod
     def validate_data(self) -> bool:
         """
@@ -43,7 +54,9 @@ class DataEntity(ABC):
         """
         pass
 
-
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# ReportGenerator is another abstract base class for inheritance hierarchy
+# Different report types will inherit from this base class
 class ReportGenerator(ABC):
     """
     Base class for making different kinds of reports.
@@ -51,8 +64,13 @@ class ReportGenerator(ABC):
     """
     
     def __init__(self, data_source):
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Protected attribute encapsulates the data source from external access
         self._data_source = data_source
     
+    # ===== POLYMORPHISM DEMONSTRATED HERE =====
+    # Abstract methods that will have different implementations in subclasses
+    # This is the foundation for polymorphic behavior in report generation
     @abstractmethod
     def generate_content(self) -> str:
         """Each report type generates content differently"""
@@ -66,6 +84,10 @@ class ReportGenerator(ABC):
     def format_report(self, title: str = None, include_stats: bool = True) -> str:
         """
         Formats the report nicely for all report types
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        This method calls the abstract methods (generate_content, get_statistics)
+        The actual behavior depends on which subclass implements these methods
+        This is runtime polymorphism in action!
         """
         report_parts = []
         
@@ -73,11 +95,13 @@ class ReportGenerator(ABC):
             report_parts.append(f"=== {title} ===")
             report_parts.append("")  # blank line
         
-        # get the main report content
+        # get the main report content - POLYMORPHIC CALL
+        # The actual implementation depends on the specific subclass
         content = self.generate_content()
         report_parts.append(content)
         
         if include_stats:
+            # Another POLYMORPHIC CALL - behavior varies by subclass
             stats = self.get_statistics()
             if stats:
                 report_parts.append("")
@@ -87,7 +111,9 @@ class ReportGenerator(ABC):
         
         return '\n'.join(report_parts)
 
-
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# DialogHandler is an abstract base class for different dialog types
+# Shows inheritance hierarchy for UI component management
 class DialogHandler(ABC):
     """
     Base class for different dialog boxes.
@@ -95,10 +121,16 @@ class DialogHandler(ABC):
     """
     
     def __init__(self, title: str, message: str):
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Protected attributes hide internal dialog state from external code
+        # Subclasses can access these, but external code uses properties/methods
         self._title = title
         self._message = message
         self._result = None
     
+    # ===== ENCAPSULATION DEMONSTRATED HERE =====
+    # Properties provide controlled access to encapsulated data
+    # External code can read these values but cannot directly modify the private state
     @property
     def title(self) -> str:
         """Gets the dialog title"""
@@ -109,6 +141,9 @@ class DialogHandler(ABC):
         """Gets the dialog message"""
         return self._message
     
+    # ===== POLYMORPHISM DEMONSTRATED HERE =====
+    # Abstract methods that enable polymorphic behavior in dialog handling
+    # Each dialog type (Info, Error, Confirmation, Input) implements these differently
     @abstractmethod
     def create_widgets(self, window, dialog_rect):
         """Each dialog type creates it's own widgets"""
@@ -121,4 +156,6 @@ class DialogHandler(ABC):
     
     def get_result(self):
         """Gets the result from the dialog"""
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Provides controlled access to the internal result state
         return self._result

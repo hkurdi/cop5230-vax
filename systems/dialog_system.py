@@ -7,9 +7,11 @@
 import pygame
 import pygwidgets
 from typing import Any, Callable
-from base_classes import DialogHandler
+from classes.base_classes import DialogHandler
 
-
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# InfoDialog inherits from DialogHandler abstract base class
+# This demonstrates inheritance - gets structure and behavior from DialogHandler
 class InfoDialog(DialogHandler):
     """
     Concrete implementation of DialogHandler for information dialogs.
@@ -17,7 +19,12 @@ class InfoDialog(DialogHandler):
     """
     
     def __init__(self, title: str, message: str):
+        # ===== INHERITANCE DEMONSTRATED HERE =====
+        # Calling parent class constructor using super()
         super().__init__(title, message)
+        
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Private attributes encapsulate dialog widget management
         self.__widgets = []  # this is a private widget list
         self.__ok_button = None
     
@@ -25,6 +32,9 @@ class InfoDialog(DialogHandler):
         """
         Implementation of abstract method for info dialog widgets.
         Creates simple OK dialog.
+        ===== INHERITANCE & POLYMORPHISM DEMONSTRATED HERE =====
+        This method implements the abstract method from DialogHandler
+        Each dialog type creates different widgets (polymorphism)
         """
         self.__widgets.clear()
         
@@ -54,6 +64,8 @@ class InfoDialog(DialogHandler):
     def handle_response(self, clicked_widget):
         """
         Implementation of abstract method for info dialog response.
+        ===== INHERITANCE & POLYMORPHISM DEMONSTRATED HERE =====
+        Polymorphic method - each dialog type handles responses differently
         """
         if clicked_widget == self.__ok_button:
             self._result = True
@@ -62,9 +74,12 @@ class InfoDialog(DialogHandler):
     
     def get_widgets(self):
         """Getter for dialog widgets"""
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Controlled access to private widget list
         return self.__widgets
 
-
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# ErrorDialog also inherits from DialogHandler - showing inheritance hierarchy
 class ErrorDialog(DialogHandler):
     """
     Concrete implementation for error dialogs.
@@ -72,7 +87,12 @@ class ErrorDialog(DialogHandler):
     """
     
     def __init__(self, title: str, message: str):
+        # ===== INHERITANCE DEMONSTRATED HERE =====
+        # Another example of calling parent constructor
         super().__init__(title, message)
+        
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Private attributes hide internal dialog state
         self.__widgets = []
         self.__ok_button = None
     
@@ -80,6 +100,9 @@ class ErrorDialog(DialogHandler):
         """
         Implementation of abstract method for error dialog widgets.
         Similar to info but with error styling.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Same method name as InfoDialog but different styling/behavior
+        This is polymorphism - same interface, different implementation
         """
         self.__widgets.clear()
         
@@ -120,6 +143,8 @@ class ErrorDialog(DialogHandler):
         return self.__widgets
 
 
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# ConfirmationDialog inherits from DialogHandler - third inheritance example
 class ConfirmationDialog(DialogHandler):
     """
     Concrete implementation for yes/no confirmation dialogs.
@@ -136,6 +161,9 @@ class ConfirmationDialog(DialogHandler):
         """
         Implementation of abstract method for confirmation dialog widgets.
         Creates Yes/No buttons.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Third different implementation - creates Yes/No buttons vs OK button
+        Shows how polymorphism enables different dialog behaviors
         """
         self.__widgets.clear()
         
@@ -172,6 +200,9 @@ class ConfirmationDialog(DialogHandler):
         """
         Implementation of abstract method for confirmation dialog response.
         Returns different results based on button clicked.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Different response handling - True/False results vs simple True
+        Polymorphic behavior based on dialog type
         """
         if clicked_widget == self.__yes_button:
             self._result = True
@@ -186,6 +217,8 @@ class ConfirmationDialog(DialogHandler):
         return self.__widgets
 
 
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# InputDialog inherits from DialogHandler - fourth inheritance example
 class InputDialog(DialogHandler):
     """
     Concrete implementation for text input dialogs.
@@ -319,6 +352,10 @@ class DialogManager:
     def __show_dialog(self, dialog: DialogHandler, callback: Callable = None):
         """
         Private method to show any dialog type (polymorphic behavior).
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        This method accepts any DialogHandler subclass - InfoDialog, ErrorDialog, etc.
+        The create_widgets() call will behave differently based on the actual dialog type
+        This is runtime polymorphism - same method call, different behaviors!
         """
         if self.__is_dialog_active:
             # print("Dialog already active, ignoring new dialog request")
@@ -336,7 +373,10 @@ class DialogManager:
         self.__dialog_rect = pygame.Rect(dialog_x, dialog_y, 
                                        self.__dialog_width, self.__dialog_height)
         
-        # create widgets using polymorphic method
+        # ===== POLYMORPHISM IN ACTION HERE =====
+        # This call to create_widgets() will execute different code depending on
+        # whether self.__current_dialog is InfoDialog, ErrorDialog, ConfirmationDialog, etc.
+        # Same method name, different implementations - this is polymorphism!
         self.__current_dialog.create_widgets(self.__window, self.__dialog_rect)
         self.__current_dialog.set_callback(callback)
     

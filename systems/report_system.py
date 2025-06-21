@@ -5,10 +5,12 @@
 # Hamza Kurdi
 
 from typing import Dict, Any, List
-from base_classes import ReportGenerator
-from vaccine_manager import VaccineManager
+from classes.base_classes import ReportGenerator
+from classes.person.vaccine_manager import VaccineManager
 
-
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# IndividualReport inherits from ReportGenerator abstract base class
+# This demonstrates inheritance - gets structure and behavior from ReportGenerator
 class IndividualReport(ReportGenerator):
     """
     Concrete implementation of ReportGenerator for individual patient reports.
@@ -16,7 +18,12 @@ class IndividualReport(ReportGenerator):
     """
     
     def __init__(self, manager: VaccineManager, patient_id: int):
+        # ===== INHERITANCE DEMONSTRATED HERE =====
+        # Calling parent class constructor using super()
         super().__init__(manager)
+        
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Private/protected attributes encapsulate report state
         self._patient_id = patient_id
         self._report_title = "Individual Patient Report"
         self._target_person = None
@@ -27,6 +34,9 @@ class IndividualReport(ReportGenerator):
     def generate_content(self) -> str:
         """
         Implementation of abstract method for individual report content.
+        ===== INHERITANCE & POLYMORPHISM DEMONSTRATED HERE =====
+        This method implements the abstract method from ReportGenerator
+        Each report type implements this method differently (polymorphism)
         """
         if not self._target_person:
             return f"ERROR: No patient found with ID {self._patient_id}"
@@ -59,6 +69,8 @@ class IndividualReport(ReportGenerator):
     def get_statistics(self) -> Dict[str, Any]:
         """
         Implementation of abstract method for individual report statistics.
+        ===== INHERITANCE & POLYMORPHISM DEMONSTRATED HERE =====
+        Another polymorphic method - each report type calculates different statistics
         """
         if not self._target_person:
             return {}
@@ -72,6 +84,9 @@ class IndividualReport(ReportGenerator):
         }
 
 
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# VaccinationStatsReport also inherits from ReportGenerator
+# Multiple classes inherit from the same base class showing inheritance hierarchy
 class VaccinationStatsReport(ReportGenerator):
     """
     Concrete implementation for vaccination statistics report.
@@ -79,12 +94,19 @@ class VaccinationStatsReport(ReportGenerator):
     """
     
     def __init__(self, manager: VaccineManager):
+        # ===== INHERITANCE DEMONSTRATED HERE =====
+        # Another example of calling parent constructor
         super().__init__(manager)
+        # ===== ENCAPSULATION DEMONSTRATED HERE =====
+        # Protected attribute encapsulates report configuration
         self._report_title = "Vaccination Statistics Report"
     
     def generate_content(self) -> str:
         """
         Implementation of abstract method for vaccination stats content.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Same method name as IndividualReport but completely different implementation
+        This is polymorphism - same interface, different behavior
         """
         if self._data_source.get_person_count() == 0:
             return "No patients in the system.\n\nAdd patients to view vaccination statistics."
@@ -105,6 +127,8 @@ class VaccinationStatsReport(ReportGenerator):
     def get_statistics(self) -> Dict[str, Any]:
         """
         Implementation of abstract method for vaccination statistics.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Different statistical calculations than IndividualReport - polymorphic behavior
         """
         stats = self._data_source.get_vaccination_stats()
         
@@ -117,6 +141,8 @@ class VaccinationStatsReport(ReportGenerator):
         }
 
 
+# ===== INHERITANCE DEMONSTRATED HERE =====
+# Third class inheriting from ReportGenerator - shows inheritance hierarchy
 class SymptomAnalysisReport(ReportGenerator):
     """
     Concrete implementation for symptom analysis report.
@@ -130,6 +156,8 @@ class SymptomAnalysisReport(ReportGenerator):
     def generate_content(self) -> str:
         """
         Implementation of abstract method for symptom analysis content.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Third different implementation of generate_content - pure polymorphism
         """
         if self._data_source.get_person_count() == 0:
             return "No patients in the system.\n\nAdd patients to view symptom analysis."
@@ -164,6 +192,8 @@ class SymptomAnalysisReport(ReportGenerator):
     def get_statistics(self) -> Dict[str, Any]:
         """
         Implementation of abstract method for symptom statistics.
+        ===== POLYMORPHISM DEMONSTRATED HERE =====
+        Third different implementation of get_statistics - polymorphic method behavior
         """
         symptom_stats = self._data_source.get_symptom_stats()
         total = self._data_source.get_person_count()
