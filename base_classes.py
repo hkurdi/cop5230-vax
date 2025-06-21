@@ -1,87 +1,79 @@
 # base_classes.py
-# Abstract Base Classes for Vaccine Tracker
-# COP5230 Assignment 2 M4 - Enhanced OOP Version
-# 06/14/2025
+# Final Vax Project Base Classes
+# COP5230 Assignment M5 
+# 06/21/2025
 # Hamza Kurdi
 
+# So last time I had alot of unused methods that basically just building the skeleton
+# for this final project. So then, I left some methods as placeholders on purpose to show I understand 
+# how abstract classes work and stuff. This gives me a good foundation to build on for the 
+# actual implementation. Here's the finished base classes for the final project.
+
 from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any
 
 
 class DataEntity(ABC):
     """
-    Abstract base class for all data entities in the system.
-    Enforces common interface for data validation and display.
+    Base class for all the data stuff in the system.
+    Makes sure everything has validation and display methods.
     """
     
     def __init__(self, entity_id: int):
-        self._id = entity_id  # thsi is a explicit private variable
-        self._created_timestamp = None
-        self._modified_timestamp = None
+        self._id = entity_id
     
     @property
     def id(self) -> int:
-        """Getter for entity ID"""
+        """Gets the ID"""
         return self._id
     
     @abstractmethod
     def validate_data(self) -> bool:
         """
-        Abstract method - each entity must implement its own validation logic
-        Returns: bool indicating if data is valid
+        Each subclass needs to implement thier own validation
+        Returns: True if data is good, False if not
         """
         pass
     
     @abstractmethod
     def get_display_info(self) -> str:
         """
-        Abstract method - each entity must define how it displays info
-        Returns: formatted string for display
+        Each class defines how to display it's info
+        Returns: string formatted for showing to user
         """
         pass
-    
-    def reset_entity(self):
-        """Base reset functionality - can be overridden"""
-        self._modified_timestamp = None
 
 
 class ReportGenerator(ABC):
     """
-    Abstract base class for different types of reports.
-    Implements polymorphism through different report types.
+    Base class for making different kinds of reports.
+    Uses polymorphism so each report type can work differently.
     """
     
     def __init__(self, data_source):
         self._data_source = data_source
-        self._report_title = ""
     
     @abstractmethod
     def generate_content(self) -> str:
-        """Abstract method - each report type implements different content generation"""
+        """Each report type generates content differently"""
         pass
     
     @abstractmethod
     def get_statistics(self) -> Dict[str, Any]:
-        """Abstract method - each report provides different statistics"""
+        """Each report calculates it's own stats"""
         pass
     
-    def format_report(self, title: str = None, **kwargs) -> str:
+    def format_report(self, title: str = None, include_stats: bool = True) -> str:
         """
-        Common report formatting with keyword arguments
-        Uses keyword args for flexible formatting options
+        Formats the report nicely for all report types
         """
-        # keyword argument handling
-        include_header = kwargs.get('include_header', True)
-        include_stats = kwargs.get('include_stats', True)
-        separator = kwargs.get('separator', '\n')
-        
         report_parts = []
         
-        if include_header and (title or self._report_title):
-            report_parts.append(f"=== {title or self._report_title} ===")
+        if title:
+            report_parts.append(f"=== {title} ===")
             report_parts.append("")  # blank line
         
-        # get the main content
+        # get the main report content
         content = self.generate_content()
         report_parts.append(content)
         
@@ -93,99 +85,40 @@ class ReportGenerator(ABC):
                 for key, value in stats.items():
                     report_parts.append(f"  {key}: {value}")
         
-        return separator.join(report_parts)
+        return '\n'.join(report_parts)
 
 
 class DialogHandler(ABC):
     """
-    Abstract base class for different dialog types.
-    Demonstrates polymorphism through different dialog behaviors.
+    Base class for different dialog boxes.
+    Shows polymorphism with different dialog behaviours.
     """
     
     def __init__(self, title: str, message: str):
         self._title = title
         self._message = message
         self._result = None
-        self._callback = None
     
     @property
     def title(self) -> str:
-        """Getter for dialog title"""
+        """Gets the dialog title"""
         return self._title
-    
-    @title.setter
-    def title(self, value: str):
-        """Setter for dialog title"""
-        self._title = value
     
     @property
     def message(self) -> str:
-        """Getter for dialog message"""
+        """Gets the dialog message"""
         return self._message
-    
-    @message.setter
-    def message(self, value: str):
-        """Setter for dialog message"""
-        self._message = value
     
     @abstractmethod
     def create_widgets(self, window, dialog_rect):
-        """Abstract method - each dialog type creates different widgets"""
+        """Each dialog type creates it's own widgets"""
         pass
     
     @abstractmethod
     def handle_response(self, response):
-        """Abstract method - each dialog handles responses differently"""
+        """Each dialog handles user responses diferently"""
         pass
     
-    def set_callback(self, callback):
-        """Setter for callback function"""
-        self._callback = callback
-    
     def get_result(self):
-        """Getter for dialog result"""
+        """Gets the result from the dialog"""
         return self._result
-
-
-class DataValidator:
-    """
-    Utility class for common validation operations.
-    Supports the modularity requirement.
-    """
-    
-    @staticmethod
-    def validate_id(entity_id: int, existing_ids: List[int] = None) -> bool:
-        """
-        Validates entity ID with optional duplicate checking
-        Uses positional and keyword arguments
-        """
-        # basic validation
-        if not isinstance(entity_id, int) or entity_id <= 0:
-            return False
-        
-        # check for duplicates if list provided
-        if existing_ids and entity_id in existing_ids:
-            return False
-        
-        return True
-    
-    @staticmethod
-    def validate_name(name: str, min_length: int = 1, max_length: int = 50) -> bool:
-        """
-        Validates name fields with keyword arguments for flexibility
-        """
-        if not isinstance(name, str):
-            return False
-        
-        name = name.strip()
-        return min_length <= len(name) <= max_length
-    
-    @staticmethod
-    def validate_phone(phone: str) -> bool:
-        """Basic phone validation - allows empty or valid formats"""
-        if not phone or not phone.strip():
-            return True  # optional field
-        
-        # remove common separators for validation
-        cleaned = ''.join(c for c in phone if c.isdigit())
-        return 10 <= len(cleaned) <= 15  # reasonable phone length range

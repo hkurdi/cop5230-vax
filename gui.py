@@ -1,7 +1,7 @@
 # gui.py
-# Enhanced GUI using OOP principles with modularity and scalability
-# COP5230 Assignment 2 M4 - Enhanced OOP Version
-# 06/14/2025
+# Final Vax Project GUI
+# COP5230 Assignment M5 
+# 06/21/2025
 # Hamza Kurdi
 
 import pygame
@@ -17,8 +17,8 @@ from dialog_system import DialogManager
 
 class GUIConfiguration:
     """
-    Configuration class for GUI settings and constants.
-    Improves maintainability by centralizing configuration.
+    Config class to keep all the GUI settings in one place.
+    Makes it easier to change colors and sizes later.
     """
     
     def __init__(self):
@@ -27,7 +27,7 @@ class GUIConfiguration:
         self.__window_height = 750
         self.__window_title = "Vaccine Tracker"
         
-        # color scheme - private variables with getters
+        # color scheme - keeping these private w/ getters
         self.__colors = {
             'bg': (245, 247, 250),
             'card': (255, 255, 255),
@@ -47,37 +47,37 @@ class GUIConfiguration:
         self.__form_columns = 2
         self.__button_spacing = 10
     
-    # getters for configuration values
+    # getter methods for the config values
     def get_window_size(self) -> tuple:
-        """Getter for window dimensions"""
+        """Returns window width and height"""
         return (self.__window_width, self.__window_height)
     
     def get_window_title(self) -> str:
-        """Getter for window title"""
+        """Returns the window title"""
         return self.__window_title
     
     def get_colors(self) -> Dict[str, tuple]:
-        """Getter for color scheme"""
-        return self.__colors.copy()  # return copy for encapsulation
+        """Returns copy of colors dict"""
+        return self.__colors.copy()  # return copy so nothing gets messed up
     
     def get_card_margin(self) -> int:
-        """Getter for card margin"""
+        """Returns the card margin value"""
         return self.__card_margin
     
     def set_window_title(self, title: str):
-        """Setter for window title"""
+        """Changes the window title"""
         self.__window_title = title
     
     def update_color(self, color_name: str, color_value: tuple):
-        """Setter for individual colors"""
+        """Updates a specific color if it exists"""
         if color_name in self.__colors:
             self.__colors[color_name] = color_value
 
 
 class PatientFormHandler:
     """
-    Separate class for handling patient form operations.
-    Improves modularity and single responsibility principle.
+    This class handles all the patient form stuff.
+    Easier to manage when its seperated like this.
     """
     
     def __init__(self, window, config: GUIConfiguration):
@@ -85,7 +85,7 @@ class PatientFormHandler:
         self.__config = config
         self.__colors = config.get_colors()
         
-        # form widgets - private variables
+        # form widgets - keeping track of everything
         self.__form_widgets = []
         self.__input_fields = {}
         self.__checkboxes = {}
@@ -94,8 +94,8 @@ class PatientFormHandler:
     
     def __setup_form_widgets(self):
         """
-        Private method to setup form widgets.
-        Demonstrates encapsulation.
+        Set up all the form widgets here.
+        Had to make this private to keep things organized.
         """
         # clear existing widgets
         self.__form_widgets.clear()
@@ -136,8 +136,8 @@ class PatientFormHandler:
     
     def __create_input_field(self, field_id: str, label: str, x: int, y: int, width: int):
         """
-        Private helper method to create input field with label.
-        Uses positional arguments for layout.
+        Helper method to make input fields with labels.
+        Takes position and size parameters.
         """
         # create label
         label_widget = pygwidgets.DisplayText(
@@ -153,7 +153,7 @@ class PatientFormHandler:
         self.__input_fields[field_id] = input_widget
     
     def __create_checkbox(self, checkbox_id: str, label: str, x: int, y: int):
-        """Private helper method to create checkbox"""
+        """Helper to create checkboxes"""
         checkbox = pygwidgets.TextCheckBox(
             self.__window, (x, y), label, value=False
         )
@@ -161,20 +161,20 @@ class PatientFormHandler:
         self.__checkboxes[checkbox_id] = checkbox
     
     def __create_section_header(self, text: str, x: int, y: int):
-        """Private helper method to create section headers"""
+        """Makes section headers for the form"""
         header = pygwidgets.DisplayText(
             self.__window, (x, y), text, fontSize=14, textColor=self.__colors['text_dark']
         )
         self.__form_widgets.append(header)
     
     def get_form_widgets(self) -> list:
-        """Getter for form widgets list"""
+        """Returns list of all form widgets"""
         return self.__form_widgets
     
     def get_form_data(self) -> Dict[str, Any]:
         """
-        Extract and validate form data.
-        Returns dict with form values or raises exception for invalid data.
+        Gets all the data from the form fields.
+        Returns a dictionary with all the values or throws an error if something's wrong.
         """
         try:
             # get basic info
@@ -219,8 +219,8 @@ class PatientFormHandler:
     
     def validate_required_fields(self) -> tuple:
         """
-        Validate required form fields.
-        Returns (is_valid, error_message) tuple.
+        Validates the required fields and makes sure everything looks good.
+        Returns tuple with (is_valid, error_message)
         """
         # check required fields
         if not self.__input_fields['id'].getValue().strip():
@@ -232,19 +232,47 @@ class PatientFormHandler:
         if not self.__input_fields['lname'].getValue().strip():
             return (False, "Last name is required to continue.")
         
-        # check if ID is numeric
+        # ID validation
         try:
-            int(self.__input_fields['id'].getValue().strip())
+            patient_id = int(self.__input_fields['id'].getValue().strip())
+            if patient_id <= 0:
+                return (False, "Patient ID must be a positive number.")
+            if patient_id > 999:  # reasonable upper limit
+                return (False, "Patient ID must be 999 or less.")
         except ValueError:
             return (False, "Patient ID must be a valid number.")
+        
+        # name lengths
+        fname = self.__input_fields['fname'].getValue().strip()
+        lname = self.__input_fields['lname'].getValue().strip()
+        
+        if len(fname) > 30:
+            return (False, "First name must be 30 characters or less.")
+        if len(lname) > 30:
+            return (False, "Last name must be 30 characters or less.")
+        
+        # address length
+        address = self.__input_fields['addr'].getValue().strip()
+        if len(address) > 100:
+            return (False, "Address must be 100 characters or less.")
+        
+        # phone validation
+        phone = self.__input_fields['phone'].getValue().strip()
+        if phone:  # only validate if not empty
+            # remove common separators
+            clean_phone = ''.join(c for c in phone if c.isdigit())
+            if len(clean_phone) < 10:
+                return (False, "Phone number must have at least 10 digits.")
+            if len(phone) > 20:  # original length including formatting
+                return (False, "Phone number must be 20 characters or less.")
         
         return (True, "")
 
 
 class PatientDisplayHandler:
     """
-    Separate class for handling patient display operations.
-    Demonstrates single responsibility principle and modularity.
+    This class takes care of showing patient information on screen.
+    Keeps the display code seperate from the form handling.
     """
     
     def __init__(self, window, config: GUIConfiguration):
@@ -252,20 +280,20 @@ class PatientDisplayHandler:
         self.__config = config
         self.__colors = config.get_colors()
         
-        # display widgets - private variables
+        # display widgets - need to keep track of these
         self.__display_widgets = []
         self.__patient_text = None
         self.__counter_label = None
         self.__nav_buttons = {}
         
-        # status indicator properties
+        # status indicator stuff
         self.__indicator_pos = (720, 530)
         self.__indicator_color = self.__colors['text_light']
         
         self.__setup_display_widgets()
     
     def __setup_display_widgets(self):
-        """Private method to setup patient display widgets"""
+        """Sets up all the widgets for showing patient info"""
         self.__display_widgets.clear()
         self.__nav_buttons.clear()
         
@@ -302,17 +330,23 @@ class PatientDisplayHandler:
         self.__display_widgets.extend(self.__nav_buttons.values())
     
     def get_display_widgets(self) -> list:
-        """Getter for display widgets"""
+        """Returns the list of display widgets"""
         return self.__display_widgets
     
     def get_nav_buttons(self) -> Dict[str, Any]:
-        """Getter for navigation buttons"""
+        """Returns the navigation button dictionary"""
         return self.__nav_buttons
+    
+    def __truncate_text(self, text: str, max_length: int = 40) -> str:
+        """Cuts off long text so it fits better"""
+        if len(text) <= max_length:
+            return text
+        return text[:max_length-3] + "..."
     
     def update_patient_display(self, person: Optional[Person], current_index: int, total_count: int):
         """
-        Update patient display with current person info.
-        Uses optional type annotation for better type safety.
+        Updates the patient display area with current patient info.
+        Handles text overflow and formatting.
         """
         if not person or total_count == 0:
             self.__patient_text.setValue(
@@ -320,31 +354,51 @@ class PatientDisplayHandler:
             )
             self.__indicator_color = self.__colors['text_light']
             self.__counter_label.setValue("No patients registered")
-            self.__update_nav_button_states(current_index, total_count)
+            self.__update_nav_button_states(-1, 0)
             return
         
-        # use the person's display method (polymorphic behavior)
-        info = person.get_display_info()
-        
-        # add status information
-        if person.is_cleared_for_entry():
-            info += "STATUS: CLEARED FOR ENTRY\n(Fully vaccinated with no symptoms)"
-            self.__indicator_color = self.__colors['success']
-        else:
-            info += "STATUS: NOT CLEARED\n(Missing vaccines or has symptoms)"
+        try:
+            # Get display info with overflow protection 
+            info = f"PATIENT INFORMATION\n"
+            info += f"ID: {person.id}  |  Name: {self.__truncate_text(person.get_first_name(), 15)} {self.__truncate_text(person.get_last_name(), 15)}\n"
+            info += f"Phone: {self.__truncate_text(person.get_phone() or 'Not provided', 20)}\n"
+            info += f"Address: {self.__truncate_text(person.get_address() or 'Not provided', 35)}\n\n"
+            
+            info += f"VACCINATION STATUS\n"
+            info += f"{'[YES]' if person.get_covid19_vaccine() else '[NO]'} COVID-19 Vaccine\n"
+            info += f"{'[YES]' if person.get_influenza_vaccine() else '[NO]'} Influenza Vaccine\n"
+            info += f"{'[YES]' if person.get_ebola_vaccine() else '[NO]'} Ebola Vaccine\n\n"
+            
+            info += f"CURRENT SYMPTOMS\n"
+            info += f"{'[YES]' if person.get_fever() else '[NO]'} Fever\n"
+            info += f"{'[YES]' if person.get_fatigue() else '[NO]'} Fatigue\n"
+            info += f"{'[YES]' if person.get_headache() else '[NO]'} Headache\n\n"
+            
+            # Add status information
+            if person.is_cleared_for_entry():
+                info += "STATUS: ✅ CLEARED FOR ENTRY\n(Fully vaccinated with no symptoms)"
+                self.__indicator_color = self.__colors['success']
+            else:
+                info += "STATUS: ❌ NOT CLEARED\n(Missing vaccines or has symptoms)"
+                self.__indicator_color = self.__colors['danger']
+            
+            self.__patient_text.setValue(info)
+            self.__counter_label.setValue(
+                f"Viewing Patient {current_index + 1} of {total_count}"
+            )
+            self.__update_nav_button_states(current_index, total_count)
+            
+        except Exception as e:
+            print(f"DEBUG: Error updating patient display: {str(e)}")
+            self.__patient_text.setValue(f"Error displaying patient information")
             self.__indicator_color = self.__colors['danger']
         
-        self.__patient_text.setValue(info)
-        self.__counter_label.setValue(
-            f"Viewing Patient {current_index + 1} of {total_count}"
-        )
-        self.__update_nav_button_states(current_index, total_count)
-    
     def __update_nav_button_states(self, current_index: int, total_count: int):
         """
-        Update navigation button states with better handling
+        Updates the prev/next buttons based on current position.
+        Disables buttons when you cant go further.
         """
-        if total_count <= 0:
+        if total_count == 0:
             self.__nav_buttons['prev'].disable()
             self.__nav_buttons['next'].disable()
         else:
@@ -354,11 +408,12 @@ class PatientDisplayHandler:
             else:
                 self.__nav_buttons['prev'].disable()
             
-            # next button  
+            # next button
             if current_index < total_count - 1:
                 self.__nav_buttons['next'].enable()
             else:
                 self.__nav_buttons['next'].disable()
+    
     def draw_status_indicator(self):
         """Draw the status indicator circle"""
         pygame.draw.circle(self.__window, self.__indicator_color, self.__indicator_pos, 20)
@@ -380,17 +435,17 @@ class PatientDisplayHandler:
 
 class EnhancedVaccineGUI:
     """
-    Main enhanced GUI class implementing OOP principles.
-    Uses composition, encapsulation, and polymorphism.
+    Main GUI class that puts everything together.
+    Uses multiple classes to keep things organized and modular.
     """
     
     def __init__(self):
-        # composition - use other classes for specific responsibilities
+        # using other classes to handle different parts
         self.__config = GUIConfiguration()
         self.__manager = VaccineManager()
         self.__report_manager = ReportManager(self.__manager)
         
-        # current state - private variables
+        # keeping track of current state
         self.__current_index = -1
         self.__running = True
         
@@ -406,7 +461,7 @@ class EnhancedVaccineGUI:
         # get colors from configuration
         self.__colors = self.__config.get_colors()
         
-        # initialize handler classes (composition)
+        # create the handler classes
         self.__form_handler = PatientFormHandler(self.__window, self.__config)
         self.__display_handler = PatientDisplayHandler(self.__window, self.__config)
         self.__dialog_manager = DialogManager(self.__window, self.__colors)
@@ -422,8 +477,8 @@ class EnhancedVaccineGUI:
     
     def __setup_main_widgets(self):
         """
-        Private method to setup main GUI widgets.
-        Separates widget creation from initialization.
+        Sets up the main widgets for the GUI.
+        Keeps widget setup seperate from the constructor.
         """
         self.__main_widgets = []
         
@@ -454,8 +509,8 @@ class EnhancedVaccineGUI:
     
     def __setup_action_buttons(self):
         """
-        Private method to setup action buttons.
-        Uses keyword arguments for flexible button configuration.
+        Creates all the action buttons at the bottom.
+        Using a config dict to make it easier to manage button layout.
         """
         button_config = {
             'width': 120,
@@ -498,8 +553,8 @@ class EnhancedVaccineGUI:
     
     def __handle_events(self, event):
         """
-        Private method for event handling using polymorphic behavior.
-        Demonstrates encapsulation of event logic.
+        Handles all the pygame events like clicks and key presses.
+        Checks dialogs first, then form widgets, then main buttons.
         """
         # dialog events take priority
         if self.__dialog_manager.handle_dialog_events(event):
@@ -534,8 +589,8 @@ class EnhancedVaccineGUI:
     
     def __handle_add_patient(self):
         """
-        Private method to handle adding new patient.
-        Uses form handler for validation and data extraction.
+        Adds a new patient to the system after validating the form.
+        Fixed an issue with navigation not working properly.
         """
         try:
             # validate required fields first
@@ -567,7 +622,7 @@ class EnhancedVaccineGUI:
                 form_data['phone'], form_data['address']
             )
             
-            # set medical data using bulk update method (keyword arguments)
+            # set medical data using bulk update method
             person.update_medical_data(
                 vaccines=form_data['vaccines'],
                 symptoms=form_data['symptoms']
@@ -575,7 +630,13 @@ class EnhancedVaccineGUI:
             
             # add to manager
             if self.__manager.add_person(person):
-                self.__current_index = self.__manager.get_person_count() - 1
+                # FIXED: Set current index correctly for new patient
+                was_empty = self.__manager.get_person_count() == 1
+                if was_empty:
+                    self.__current_index = 0  # show first patient right away
+                else:
+                    self.__current_index = self.__manager.get_person_count() - 1  # show the newest patient
+                
                 self.__update_patient_display()
                 
                 success_msg = f"Patient {form_data['first_name']} {form_data['last_name']} has been successfully added to the system."
@@ -588,44 +649,42 @@ class EnhancedVaccineGUI:
         
         except Exception as e:
             self.__dialog_manager.show_error_dialog("System Error", f"An unexpected error occurred: {str(e)}")
-    
+            
     def __navigate_previous(self):
-        """Private method to navigate to previous patient"""
+        """Goes to the previous patient in the list"""
         if self.__current_index > 0:
             self.__current_index -= 1
             self.__update_patient_display()
     
     def __navigate_next(self):
-        """Private method to navigate to next patient"""
+        """Goes to the next patient in the list"""
         if self.__current_index < self.__manager.get_person_count() - 1:
             self.__current_index += 1
             self.__update_patient_display()
     
     def __update_patient_display(self):
         """
-        Update patient display with better index handling
+        Updates the patient display area with current info.
+        Uses the display handler class to keep things organized.
         """
         current_person = None
         total_count = self.__manager.get_person_count()
         
-        # Handle empty system
-        if total_count == 0:
-            self.__current_index = -1
-            self.__display_handler.update_patient_display(None, -1, 0)
-            return
+        # ensure valid index
+        if total_count > 0:
+            if self.__current_index < 0:
+                self.__current_index = 0
+            elif self.__current_index >= total_count:
+                self.__current_index = total_count - 1
+            
+            current_person = self.__manager.get_person_by_index(self.__current_index)
         
-        # Ensure valid index for non-empty system
-        if self.__current_index < 0:
-            self.__current_index = 0
-        elif self.__current_index >= total_count:
-            self.__current_index = total_count - 1
-        
-        current_person = self.__manager.get_person_by_index(self.__current_index)
+        # update display using handler
         self.__display_handler.update_patient_display(current_person, self.__current_index, total_count)
     
-    # Action button handlers using polymorphic report generation
+    # Action button handlers for the reports
     def __handle_individual_report(self):
-        """Handle individual report generation using polymorphism"""
+        """Handles generating a report for a specific patient"""
         if self.__manager.get_person_count() == 0:
             self.__dialog_manager.show_info_dialog(
                 "No Patients", "No patients in the system.\n\nAdd patients first to generate individual reports."
@@ -643,8 +702,8 @@ class EnhancedVaccineGUI:
     
     def __process_individual_report(self, id_input: str):
         """
-        Process individual report input using polymorphic report generation.
-        Callback method for input dialog.
+        Processes the patient ID input and generates the report.
+        This is called back from the input dialog.
         """
         if id_input is None:  # user cancelled
             return
@@ -656,7 +715,7 @@ class EnhancedVaccineGUI:
             
             patient_id = int(id_input.strip())
             
-            # use polymorphic report generation
+            # generate the report using the report manager
             report_content = self.__report_manager.generate_individual_report(
                 patient_id, include_header=True, include_stats=True
             )
@@ -678,33 +737,38 @@ class EnhancedVaccineGUI:
             self.__dialog_manager.show_error_dialog("Report Error", f"Unable to generate report: {str(e)}")
     
     def __handle_vaccine_stats(self):
-        """Handle vaccination statistics using polymorphic report generation"""
+        """Shows vaccination statistics for all patients"""
         report_content = self.__report_manager.generate_vaccination_stats(
             include_header=True, include_stats=False
         )
         self.__dialog_manager.show_info_dialog("Vaccination Statistics", report_content)
     
     def __handle_symptom_analysis(self):
-        """Handle symptom analysis using polymorphic report generation"""
+        """Shows symptom analysis for all patients"""
         report_content = self.__report_manager.generate_symptom_analysis(
             include_header=True, include_stats=False
         )
         self.__dialog_manager.show_info_dialog("Symptom Analysis", report_content)
-    
+        
     def __handle_reset_data(self):
-        """Handle data reset with confirmation dialog"""
+        """Handle data reset with double-click prevention"""
+        # prevent multiple dialogs
+        if self.__dialog_manager.get_is_active():
+            return
+            
         if self.__manager.get_person_count() == 0:
             self.__dialog_manager.show_info_dialog(
                 "Reset Data", "No patient data to reset.\n\nThe system is already empty."
             )
             return
         
+        patient_count = self.__manager.get_person_count()
         confirm_msg = (
             f"Are you sure you want to reset ALL vaccination and symptom data?\n\n"
-            f"This will affect {self.__manager.get_person_count()} patient(s):\n"
-            f"- All vaccination records will be cleared\n"
-            f"- All symptom data will be removed\n"
-            f"- Patient information (names, IDs) will be kept\n\n"
+            f"This will affect {patient_count} patient(s):\n"
+            f"• All vaccination records will be cleared\n"
+            f"• All symptom data will be removed\n"
+            f"• Patient information (names, IDs) will be kept\n\n"
             f"This action cannot be undone."
         )
         
@@ -714,61 +778,54 @@ class EnhancedVaccineGUI:
     
     def __process_reset_confirmation(self, confirmed: bool):
         """Process reset confirmation callback"""
-        print(f"DEBUG: Reset confirmation received: {confirmed}")
-        
         if confirmed:
-            try:
-                count = self.__manager.reset_all_medical_data()
-                self.__update_patient_display()
-                self.__form_handler.clear_form()
-                
-                success_msg = f"All vaccination and symptom data has been cleared for {count} patient(s).\n\nPatient information has been preserved."
-                self.__dialog_manager.show_info_dialog("Reset Complete", success_msg)
-                
-            except Exception as e:
-                print(f"DEBUG: Error during reset: {str(e)}")
-                self.__dialog_manager.show_error_dialog("Reset Failed", f"Error: {str(e)}")
-    
+            self.__manager.reset_all_medical_data()
+            self.__dialog_manager.show_info_dialog(
+                "Reset Complete",
+                f"All vaccination and symptom data has been cleared for {self.__manager.get_person_count()} patient(s).\n\nPatient information has been preserved."
+            )
+            self.__update_patient_display()
+            self.__form_handler.clear_form()
+            
     def __handle_delete_all(self):
-        """Handle delete all patients with confirmation"""
+        """Handle delete all with double-click prevention"""
+        # prevent multiple dialogs
+        if self.__dialog_manager.get_is_active():
+            return
+            
         if self.__manager.get_person_count() == 0:
             self.__dialog_manager.show_info_dialog(
                 "Delete All Patients", "No patients to delete.\n\nThe system is already empty."
             )
             return
         
+        patient_count = self.__manager.get_person_count()
         warning_msg = (
-            f"WARNING: This will permanently delete ALL {self.__manager.get_person_count()} patient(s)!\n\n"
+            f"⚠️ WARNING: This will permanently delete ALL {patient_count} patient(s)!\n\n"
             f"This includes:\n"
-            f"- All patient information\n"
-            f"- All vaccination records\n"
-            f"- All symptom data\n\n"
+            f"• All patient information\n"
+            f"• All vaccination records\n"
+            f"• All symptom data\n\n"
             f"This action is PERMANENT and cannot be undone!\n\n"
             f"Are you absolutely sure?"
         )
         
         self.__dialog_manager.show_confirmation_dialog(
-            "DANGER: Confirm Complete Deletion", warning_msg, self.__process_delete_confirmation
+            "⚠️ DANGER: Confirm Complete Deletion", warning_msg, self.__process_delete_confirmation
         )
-    
     def __process_delete_confirmation(self, confirmed: bool):
         """Process delete confirmation callback"""
-        print(f"DEBUG: Delete confirmation received: {confirmed}")
-        
         if confirmed:
-            try:
-                patient_count = self.__manager.get_person_count()
-                self.__manager.clear_all_people()
-                self.__current_index = -1
-                self.__update_patient_display()
-                self.__form_handler.clear_form()
-                
-                success_msg = f"All {patient_count} patient record(s) have been permanently deleted from the system."
-                self.__dialog_manager.show_info_dialog("Deletion Complete", success_msg)
-                
-            except Exception as e:
-                print(f"DEBUG: Error during deletion: {str(e)}")
-                self.__dialog_manager.show_error_dialog("Deletion Failed", f"Error: {str(e)}")
+            patient_count = self.__manager.get_person_count()
+            self.__manager.clear_all_people()
+            self.__current_index = -1
+            self.__update_patient_display()
+            self.__form_handler.clear_form()
+            
+            self.__dialog_manager.show_info_dialog(
+                "Deletion Complete",
+                f"All {patient_count} patient record(s) have been permanently deleted from the system."
+            )
     
     def __handle_exit(self):
         """Handle application exit with confirmation"""
@@ -787,8 +844,8 @@ class EnhancedVaccineGUI:
     
     def __draw_modern_card(self, x: int, y: int, width: int, height: int, color: tuple = None):
         """
-        Private method to draw modern cards with shadows.
-        Uses positional and keyword arguments.
+        Draws modern looking cards with shadow effects.
+        Can specify custom color or uses default card color.
         """
         if color is None:
             color = self.__colors['card']
@@ -804,8 +861,8 @@ class EnhancedVaccineGUI:
     
     def __draw(self):
         """
-        Private method to draw all GUI elements.
-        Uses composition to delegate drawing to handlers.
+        Draws everything on the screen each frame.
+        Calls the different handler classes to draw their parts.
         """
         # clear screen
         self.__window.fill(self.__colors['bg'])
@@ -830,7 +887,7 @@ class EnhancedVaccineGUI:
         # draw status indicator using display handler
         self.__display_handler.draw_status_indicator()
         
-        # draw dialog if active (polymorphic behavior)
+        # draw dialog if one is active
         self.__dialog_manager.draw_dialog()
         
         # update display
@@ -838,8 +895,8 @@ class EnhancedVaccineGUI:
     
     def __run(self):
         """
-        Private method for main application loop.
-        Encapsulates the main game loop logic.
+        Main application loop that keeps everything running.
+        Handles events and redraws the screen at 60 FPS.
         """
         while self.__running:
             for event in pygame.event.get():
@@ -855,7 +912,7 @@ class EnhancedVaccineGUI:
         sys.exit()
 
 
-# Application entry point
+# Entry point for the application
 if __name__ == "__main__":
-    # create and run the enhanced GUI application
+    # create and run the GUI application
     app = EnhancedVaccineGUI()
