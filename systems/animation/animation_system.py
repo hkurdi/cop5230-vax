@@ -192,9 +192,6 @@ class MessageNotification:
         self.__alpha = 255
         self.__slide_offset = 200  # start off-screen
         self.__is_active = False
-        
-        # ===== KEYWORD ARGUMENTS DEMONSTRATED HERE =====
-        # Using **kwargs to handle flexible positioning options
         self.__position = position_options.get('position', (550, 80))
         self.__background_color = position_options.get('bg_color', (59, 130, 246))
     
